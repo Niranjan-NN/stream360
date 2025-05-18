@@ -5,7 +5,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { dirname } from 'path';
 import authRoutes from './routes/auth.js';
 import roomRoutes from './routes/rooms.js';
 import { verifyToken } from './middleware/auth.js';
@@ -39,10 +39,7 @@ app.use(express.json());
 // Connect to MongoDB
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
+    const conn = await mongoose.connect(process.env.MONGO_URI);
     console.log(`MongoDB connected: ${conn.connection.host}`);
   } catch (error) {
     console.error('MongoDB connection failed:', error.message);
@@ -58,13 +55,10 @@ app.get('/api/me', verifyToken, (req, res) => {
   res.json(req.user);
 });
 
-// Serve static files from frontend in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(join(__dirname, '../dist')));
-  app.get('*', (req, res) => {
-    res.sendFile(join(__dirname, '../dist/index.html'));
-  });
-}
+// Just respond with a simple message at root
+app.get('/', (req, res) => {
+  res.send('✅ Stream360 API is live!');
+});
 
 // Socket.IO events
 io.on('connection', (socket) => {
