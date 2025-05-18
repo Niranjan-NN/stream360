@@ -2,7 +2,7 @@ import { io, Socket } from 'socket.io-client';
 import { Participant, Message } from '../types';
 import { useRoomStore } from '../store/roomStore';
 
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const baseURL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
 let socket: Socket;
 
@@ -14,7 +14,6 @@ const initializeSocket = () => {
     autoConnect: true,
   });
 
-  // Setup socket event listeners
   socket.on('connect', () => {
     console.log('Connected to socket server');
   });
@@ -51,7 +50,6 @@ const initializeSocket = () => {
   return socket;
 };
 
-// Function to emit events
 const emitJoinRoom = (roomId: string, user: any) => {
   if (!socket.connected) socket.connect();
   socket.emit('join-room', { roomId, user });
